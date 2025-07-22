@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerador de Capas para YouTube</title>
+    <title>Gerador de Capas para YouTube v2</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Google Fonts -->
@@ -34,18 +34,32 @@
         #notification {
             transition: opacity 0.3s ease-in-out, bottom 0.3s ease-in-out;
         }
-        #pexels-results {
+        #image-results {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 0.5rem;
         }
-        #pexels-results img {
+        #image-results img {
             cursor: pointer;
             transition: transform 0.2s ease-in-out, box-shadow 0.2s;
         }
-        #pexels-results img:hover {
+        #image-results img:hover {
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(139, 92, 246, 0.7);
+        }
+        /* Estilos para as abas de busca */
+        .tab-btn {
+            transition: background-color 0.2s, color 0.2s;
+        }
+        .tab-btn.active {
+            background-color: #8b5cf6;
+            color: white;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
         }
     </style>
 </head>
@@ -55,21 +69,36 @@
     <div class="w-full md:w-1/3 lg:w-1/4 bg-gray-800 p-6 overflow-y-auto space-y-6">
         <h1 class="text-2xl font-bold text-center text-violet-400">Gerador de Capas</h1>
         
-        <!-- Busca de Imagens Pexels -->
-        <div class="space-y-4 rounded-lg bg-gray-700 p-4">
-            <h3 class="font-bold">Buscar Imagem de Fundo (Pexels)</h3>
-            <div>
-                <label for="pexelsApiKey" class="block text-sm font-medium">Sua Chave da API (Pexels)</label>
-                <input type="password" id="pexelsApiKey" placeholder="Cole sua chave da API do Pexels" class="mt-1 w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
+        <!-- Busca de Imagens -->
+        <div class="rounded-lg bg-gray-700 p-4">
+            <div class="flex border-b border-gray-600 mb-4">
+                <button id="tab-pexels" class="tab-btn active flex-1 py-2 rounded-t-lg">Pexels</button>
+                <button id="tab-pixabay" class="tab-btn flex-1 py-2 rounded-t-lg">Pixabay</button>
             </div>
-            <div class="flex space-x-2">
-                <input type="text" id="pexelsSearchQuery" placeholder="Ex: tecnologia, natureza..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
-                <button id="pexelsSearchBtn" class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg">Buscar</button>
+
+            <!-- Conteúdo da Aba Pexels -->
+            <div id="content-pexels" class="tab-content active space-y-4">
+                <input type="password" id="pexelsApiKey" placeholder="Sua Chave da API do Pexels" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
             </div>
-            <div id="pexels-results" class="max-h-48 overflow-y-auto rounded-md bg-gray-800 p-2"></div>
+
+            <!-- Conteúdo da Aba Pixabay -->
+            <div id="content-pixabay" class="tab-content space-y-4">
+                <input type="password" id="pixabayApiKey" placeholder="Sua Chave da API do Pixabay" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                <select id="pixabayImageType" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
+                    <option value="photo" selected>Fotos</option>
+                    <option value="illustration">Ilustrações</option>
+                    <option value="vector">Vetores</option>
+                </select>
+            </div>
+
+            <div class="flex space-x-2 mt-4">
+                <input type="text" id="searchQuery" placeholder="Ex: tecnologia, natureza..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                <button id="searchBtn" class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg">Buscar</button>
+            </div>
+            <div id="image-results" class="max-h-48 overflow-y-auto rounded-md bg-gray-800 p-2"></div>
         </div>
 
-        <!-- Controle de Imagens (Upload Manual) -->
+        <!-- Outros Controles ... -->
         <div class="space-y-4">
             <div>
                 <label class="block text-sm font-medium mb-2">Ou envie do seu computador:</label>
@@ -78,20 +107,23 @@
             <div>
                 <input type="file" id="foregroundImageLoader" accept="image/*" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 cursor-pointer" title="Carregar Imagem Destacada">
             </div>
+             <div>
+                <input type="file" id="logoLoader" accept="image/*" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 cursor-pointer" title="Carregar sua Logo">
+            </div>
         </div>
-
-        <!-- Filtros da Imagem de Fundo -->
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
-            <h2 class="font-bold">Filtros da Imagem de Fundo</h2>
+            <h2 class="font-bold">Ajustes da Imagem de Fundo</h2>
             <label for="brightness" class="block text-sm font-medium">Brilho: <span id="brightnessValue">100</span>%</label>
             <input type="range" id="brightness" min="0" max="200" value="100" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
             <label for="contrast" class="block text-sm font-medium">Contraste: <span id="contrastValue">100</span>%</label>
             <input type="range" id="contrast" min="0" max="200" value="100" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
             <label for="saturate" class="block text-sm font-medium">Saturação: <span id="saturateValue">100</span>%</label>
             <input type="range" id="saturate" min="0" max="200" value="100" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <label for="overlayColor" class="block text-sm font-medium">Cor de Sobreposição</label>
+            <input type="color" id="overlayColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md cursor-pointer">
+            <label for="overlayOpacity" class="block text-sm font-medium">Opacidade da Sobreposição: <span id="overlayOpacityValue">0</span>%</label>
+            <input type="range" id="overlayOpacity" min="0" max="100" value="0" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
         </div>
-        
-        <!-- Controles da Imagem Destacada -->
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
             <h2 class="font-bold">Controles da Imagem Destacada</h2>
             <label for="fgScale" class="block text-sm font-medium">Tamanho: <span id="fgScaleValue">100</span>%</label>
@@ -101,52 +133,62 @@
             <label for="fgY" class="block text-sm font-medium">Posição Vertical: <span id="fgYValue">360</span></label>
             <input type="range" id="fgY" min="0" max="720" value="360" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
         </div>
-
-        <!-- Controles de Texto Principal -->
+        <div class="space-y-4 rounded-lg bg-gray-700 p-4">
+            <h2 class="font-bold">Controles da Logo</h2>
+            <label for="logoScale" class="block text-sm font-medium">Tamanho: <span id="logoScaleValue">20</span>%</label>
+            <input type="range" id="logoScale" min="5" max="100" value="20" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <label for="logoX" class="block text-sm font-medium">Posição Horizontal: <span id="logoXValue">1180</span></label>
+            <input type="range" id="logoX" min="0" max="1280" value="1180" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <label for="logoY" class="block text-sm font-medium">Posição Vertical: <span id="logoYValue">650</span></label>
+            <input type="range" id="logoY" min="0" max="720" value="650" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+        </div>
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
             <h2 class="font-bold">Texto Principal</h2>
-            <input type="text" id="mainText" placeholder="Digite o texto principal..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
-            <label for="mainFont" class="block text-sm font-medium">Fonte</label>
-            <select id="mainFont" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <input type="text" id="mainText" placeholder="Digite o texto principal..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
+            <select id="mainFont" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
                 <option value="Anton" selected>Anton</option>
                 <option value="Bangers">Bangers</option>
                 <option value="Press Start 2P">Press Start 2P</option>
                 <option value="Oswald">Oswald</option>
                 <option value="Inter">Inter</option>
             </select>
-            <label for="mainTextColor" class="block text-sm font-medium">Cor</label>
+            <label class="block text-sm font-medium">Cor do Texto</label>
             <input type="color" id="mainTextColor" value="#FFFFFF" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md cursor-pointer">
-            <label for="mainTextSize" class="block text-sm font-medium">Tamanho: <span id="mainTextSizeValue">120</span>px</label>
+            <label class="block text-sm font-medium">Cor do Contorno</label>
+            <input type="color" id="mainStrokeColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md cursor-pointer">
+            <label class="block text-sm font-medium">Espessura do Contorno: <span id="mainStrokeWidthValue">8</span>px</label>
+            <input type="range" id="mainStrokeWidth" min="0" max="30" value="8" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <label class="block text-sm font-medium">Tamanho: <span id="mainTextSizeValue">120</span>px</label>
             <input type="range" id="mainTextSize" min="20" max="300" value="120" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="mainTextX" class="block text-sm font-medium">Posição Horizontal: <span id="mainTextXValue">640</span></label>
+            <label class="block text-sm font-medium">Posição Horizontal: <span id="mainTextXValue">640</span></label>
             <input type="range" id="mainTextX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="mainTextY" class="block text-sm font-medium">Posição Vertical: <span id="mainTextYValue">150</span></label>
+            <label class="block text-sm font-medium">Posição Vertical: <span id="mainTextYValue">150</span></label>
             <input type="range" id="mainTextY" min="0" max="720" value="150" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
         </div>
-
-        <!-- Controles de Texto Secundário -->
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
             <h2 class="font-bold">Texto Secundário</h2>
-             <input type="text" id="subText" placeholder="Digite o texto secundário..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
-             <label for="subFont" class="block text-sm font-medium">Fonte</label>
-            <select id="subFont" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
+            <input type="text" id="subText" placeholder="Digite o texto secundário..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
+            <select id="subFont" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
                 <option value="Anton">Anton</option>
                 <option value="Bangers">Bangers</option>
                 <option value="Press Start 2P">Press Start 2P</option>
                 <option value="Oswald">Oswald</option>
                 <option value="Inter" selected>Inter</option>
             </select>
-            <label for="subTextColor" class="block text-sm font-medium">Cor</label>
+            <label class="block text-sm font-medium">Cor do Texto</label>
             <input type="color" id="subTextColor" value="#FFFF00" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md cursor-pointer">
-            <label for="subTextSize" class="block text-sm font-medium">Tamanho: <span id="subTextSizeValue">70</span>px</label>
+            <label class="block text-sm font-medium">Cor do Contorno</label>
+            <input type="color" id="subStrokeColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md cursor-pointer">
+            <label class="block text-sm font-medium">Espessura do Contorno: <span id="subStrokeWidthValue">5</span>px</label>
+            <input type="range" id="subStrokeWidth" min="0" max="30" value="5" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <label class="block text-sm font-medium">Tamanho: <span id="subTextSizeValue">70</span>px</label>
             <input type="range" id="subTextSize" min="20" max="200" value="70" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="subTextX" class="block text-sm font-medium">Posição Horizontal: <span id="subTextXValue">640</span></label>
+            <label class="block text-sm font-medium">Posição Horizontal: <span id="subTextXValue">640</span></label>
             <input type="range" id="subTextX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="subTextY" class="block text-sm font-medium">Posição Vertical: <span id="subTextYValue">600</span></label>
+            <label class="block text-sm font-medium">Posição Vertical: <span id="subTextYValue">600</span></label>
             <input type="range" id="subTextY" min="0" max="720" value="600" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
         </div>
-
-        <button id="downloadBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg transition-colors duration-300">
+        <button id="downloadBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">
             Baixar Capa (PNG)
         </button>
     </div>
@@ -167,60 +209,48 @@
         const ctx = canvas.getContext('2d');
         const imageLoader = document.getElementById('imageLoader');
         const foregroundImageLoader = document.getElementById('foregroundImageLoader');
+        const logoLoader = document.getElementById('logoLoader');
         const downloadBtn = document.getElementById('downloadBtn');
         const notification = document.getElementById('notification');
-        const pexelsApiKey = document.getElementById('pexelsApiKey');
-        const pexelsSearchQuery = document.getElementById('pexelsSearchQuery');
-        const pexelsSearchBtn = document.getElementById('pexelsSearchBtn');
-        const pexelsResults = document.getElementById('pexels-results');
         
-        // Controles de Filtros
+        // Elementos de busca
+        const pexelsApiKey = document.getElementById('pexelsApiKey');
+        const pixabayApiKey = document.getElementById('pixabayApiKey');
+        const searchQuery = document.getElementById('searchQuery');
+        const searchBtn = document.getElementById('searchBtn');
+        const imageResults = document.getElementById('image-results');
+        const pixabayImageType = document.getElementById('pixabayImageType');
+        const tabPexels = document.getElementById('tab-pexels');
+        const tabPixabay = document.getElementById('tab-pixabay');
+        const contentPexels = document.getElementById('content-pexels');
+        const contentPixabay = document.getElementById('content-pixabay');
+        
+        // Demais controles...
         const brightness = document.getElementById('brightness');
         const contrast = document.getElementById('contrast');
         const saturate = document.getElementById('saturate');
-        const brightnessValue = document.getElementById('brightnessValue');
-        const contrastValue = document.getElementById('contrastValue');
-        const saturateValue = document.getElementById('saturateValue');
-
-        // Controles da Imagem Destacada
+        const overlayColor = document.getElementById('overlayColor');
+        const overlayOpacity = document.getElementById('overlayOpacity');
         const fgScale = document.getElementById('fgScale');
         const fgX = document.getElementById('fgX');
         const fgY = document.getElementById('fgY');
-        const fgScaleValue = document.getElementById('fgScaleValue');
-        const fgXValue = document.getElementById('fgXValue');
-        const fgYValue = document.getElementById('fgYValue');
-
-        // Controles do Texto Principal
-        const mainText = document.getElementById('mainText');
-        const mainFont = document.getElementById('mainFont');
-        const mainTextColor = document.getElementById('mainTextColor');
-        const mainTextSize = document.getElementById('mainTextSize');
-        const mainTextX = document.getElementById('mainTextX');
-        const mainTextY = document.getElementById('mainTextY');
-        const mainTextSizeValue = document.getElementById('mainTextSizeValue');
-        const mainTextXValue = document.getElementById('mainTextXValue');
-        const mainTextYValue = document.getElementById('mainTextYValue');
-        
-        // Controles do Texto Secundário
-        const subText = document.getElementById('subText');
-        const subFont = document.getElementById('subFont');
-        const subTextColor = document.getElementById('subTextColor');
-        const subTextSize = document.getElementById('subTextSize');
-        const subTextX = document.getElementById('subTextX');
-        const subTextY = document.getElementById('subTextY');
-        const subTextSizeValue = document.getElementById('subTextSizeValue');
-        const subTextXValue = document.getElementById('subTextXValue');
-        const subTextYValue = document.getElementById('subTextYValue');
+        const logoScale = document.getElementById('logoScale');
+        const logoX = document.getElementById('logoX');
+        const logoY = document.getElementById('logoY');
 
         // --- ESTADO INICIAL ---
         let backgroundImage = null;
         let foregroundImage = null;
+        let logoImage = null;
+        let activeSearchSource = 'pexels';
 
         const filterState = { brightness: 100, contrast: 100, saturate: 100 };
+        const overlayState = { color: '#000000', opacity: 0 };
         const foregroundImageState = { x: 640, y: 360, scale: 1.0 };
+        const logoState = { x: 1180, y: 650, scale: 0.2 };
         const textState = {
-            main: { text: 'TÍTULO INCRÍVEL', color: '#FFFFFF', size: 120, y: 150, x: 640, font: 'Anton' },
-            sub: { text: 'Texto de apoio aqui', color: '#FFFF00', size: 70, y: 600, x: 640, font: 'Inter' }
+            main: { text: 'TÍTULO INCRÍVEL', color: '#FFFFFF', size: 120, y: 150, x: 640, font: 'Anton', strokeColor: '#000000', strokeWidth: 8 },
+            sub: { text: 'Texto de apoio aqui', color: '#FFFF00', size: 70, y: 600, x: 640, font: 'Inter', strokeColor: '#000000', strokeWidth: 5 }
         };
         
         // --- FUNÇÕES DO SISTEMA ---
@@ -238,10 +268,7 @@
 
         function redrawCanvas() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            // Aplica os filtros antes de desenhar a imagem de fundo
             ctx.filter = `brightness(${filterState.brightness}%) contrast(${filterState.contrast}%) saturate(${filterState.saturate}%)`;
-
             if (!backgroundImage) {
                 ctx.fillStyle = '#374151';
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -252,33 +279,46 @@
             } else {
                 ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
             }
-
-            // Reseta os filtros para não afetar os outros elementos
             ctx.filter = 'none';
 
+            if (overlayState.opacity > 0) {
+                ctx.fillStyle = overlayState.color;
+                ctx.globalAlpha = overlayState.opacity / 100;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.globalAlpha = 1.0;
+            }
+
             if (foregroundImage) {
-                const scale = foregroundImageState.scale;
+                const { x, y, scale } = foregroundImageState;
                 const w = foregroundImage.width * scale;
                 const h = foregroundImage.height * scale;
-                const x = foregroundImageState.x - w / 2;
-                const y = foregroundImageState.y - h / 2;
-                ctx.drawImage(foregroundImage, x, y, w, h);
+                ctx.drawImage(foregroundImage, x - w / 2, y - h / 2, w, h);
             }
+
+            if (logoImage) {
+                const { x, y, scale } = logoState;
+                const w = logoImage.width * scale;
+                const h = logoImage.height * scale;
+                ctx.drawImage(logoImage, x - w / 2, y - h / 2, w, h);
+            }
+
             drawText(textState.main);
             drawText(textState.sub);
         }
         
         function drawText(state) {
             ctx.font = `bold ${state.size}px "${state.font}"`;
-            ctx.fillStyle = state.color;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
-            ctx.strokeStyle = 'black';
-            ctx.lineWidth = state.size / 15;
-            ctx.strokeText(state.text, state.x, state.y);
+            ctx.strokeStyle = state.strokeColor;
+            ctx.lineWidth = state.strokeWidth;
+            if (state.strokeWidth > 0) {
+                ctx.strokeText(state.text, state.x, state.y);
+            }
+            ctx.fillStyle = state.color;
             ctx.fillText(state.text, state.x, state.y);
         }
-
+        
         function handleImageLoad(file, imageType) {
             if (!file) return;
             const reader = new FileReader();
@@ -287,6 +327,7 @@
                 img.onload = () => {
                     if (imageType === 'background') backgroundImage = img;
                     else if (imageType === 'foreground') foregroundImage = img;
+                    else if (imageType === 'logo') logoImage = img;
                     redrawCanvas();
                 };
                 img.src = reader.result;
@@ -294,50 +335,47 @@
             reader.readAsDataURL(file);
         }
 
-        // --- LÓGICA DO PEXELS ---
-        async function searchPexels() {
-            const apiKey = pexelsApiKey.value;
-            const query = pexelsSearchQuery.value;
-            if (!apiKey) {
-                showNotification('Por favor, insira sua chave da API do Pexels.', true);
-                return;
-            }
-            if (!query) {
-                showNotification('Por favor, digite um termo para a busca.', true);
-                return;
-            }
-            pexelsResults.innerHTML = '<div class="col-span-full flex justify-center"><div class="loader"></div></div>';
+        // --- LÓGICA DE BUSCA DE IMAGENS ---
+        async function searchPexels(apiKey, query) {
             const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=15&page=1`;
-            try {
-                const response = await fetch(url, { headers: { 'Authorization': apiKey } });
-                if (!response.ok) { throw new Error(`Erro na busca: ${response.statusText} (${response.status})`); }
-                const data = await response.json();
-                displayPexelsResults(data.photos);
-            } catch (error) {
-                console.error("Erro ao buscar no Pexels:", error);
-                showNotification(`Falha na busca. Detalhes: ${error.message}`, true);
-                pexelsResults.innerHTML = '<p class="text-center text-red-400">A busca falhou.</p>';
-            }
+            const response = await fetch(url, { headers: { 'Authorization': apiKey } });
+            if (!response.ok) throw new Error(`Erro Pexels: ${response.statusText}`);
+            const data = await response.json();
+            return data.photos.map(photo => ({
+                thumb: photo.src.tiny,
+                full: photo.src.large2x,
+                alt: photo.alt
+            }));
         }
 
-        function displayPexelsResults(photos) {
-            pexelsResults.innerHTML = '';
-            if (photos.length === 0) {
-                pexelsResults.innerHTML = '<p class="text-center text-gray-400">Nenhum resultado encontrado.</p>';
-                return;
-            }
+        async function searchPixabay(apiKey, query) {
+            const imageType = pixabayImageType.value;
+            const url = `https://pixabay.com/api/?key=${apiKey}&q=${encodeURIComponent(query)}&image_type=${imageType}&per_page=15`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error(`Erro Pixabay: ${response.statusText}`);
+            const data = await response.json();
+            return data.hits.map(hit => ({
+                thumb: hit.previewURL,
+                full: hit.largeImageURL,
+                alt: hit.tags
+            }));
+        }
+
+        function displayResults(photos) {
+            imageResults.innerHTML = '';
+            if (photos.length === 0) { imageResults.innerHTML = '<p>Nenhum resultado.</p>'; return; }
             photos.forEach(photo => {
                 const imgElement = document.createElement('img');
-                imgElement.src = photo.src.tiny;
+                imgElement.src = photo.thumb;
                 imgElement.alt = photo.alt;
                 imgElement.className = 'rounded-md w-full h-full object-cover';
-                imgElement.onclick = () => setBackgroundFromPexels(photo.src.large2x);
-                pexelsResults.appendChild(imgElement);
+                imgElement.onclick = () => setBackgroundFromUrl(photo.full);
+                imageResults.appendChild(imgElement);
             });
         }
 
-        function setBackgroundFromPexels(imageUrl) {
-            showNotification('Carregando imagem de alta resolução...');
+        function setBackgroundFromUrl(imageUrl) {
+            showNotification('Carregando imagem...');
             const img = new Image();
             img.crossOrigin = "Anonymous";
             img.onload = () => {
@@ -345,68 +383,88 @@
                 redrawCanvas();
                 showNotification('Imagem de fundo atualizada!', false);
             };
-            img.onerror = () => showNotification('Não foi possível carregar a imagem selecionada.', true);
+            img.onerror = () => showNotification('Não foi possível carregar a imagem.', true);
             img.src = imageUrl;
         }
 
         // --- EVENT LISTENERS ---
         imageLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'background'));
         foregroundImageLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'foreground'));
-        pexelsSearchBtn.addEventListener('click', searchPexels);
-        pexelsSearchQuery.addEventListener('keyup', (e) => { if (e.key === 'Enter') searchPexels(); });
-
-        // Listeners para Filtros
-        brightness.addEventListener('input', (e) => {
-            filterState.brightness = e.target.value;
-            brightnessValue.textContent = e.target.value;
-            redrawCanvas();
+        logoLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'logo'));
+        
+        // Listeners das Abas
+        tabPexels.addEventListener('click', () => {
+            activeSearchSource = 'pexels';
+            tabPexels.classList.add('active');
+            tabPixabay.classList.remove('active');
+            contentPexels.classList.add('active');
+            contentPixabay.classList.remove('active');
         });
-        contrast.addEventListener('input', (e) => {
-            filterState.contrast = e.target.value;
-            contrastValue.textContent = e.target.value;
-            redrawCanvas();
-        });
-        saturate.addEventListener('input', (e) => {
-            filterState.saturate = e.target.value;
-            saturateValue.textContent = e.target.value;
-            redrawCanvas();
+        tabPixabay.addEventListener('click', () => {
+            activeSearchSource = 'pixabay';
+            tabPixabay.classList.add('active');
+            tabPexels.classList.remove('active');
+            contentPixabay.classList.add('active');
+            contentPexels.classList.remove('active');
         });
 
-        // Listeners para Imagem Destacada
-        fgScale.addEventListener('input', (e) => {
-            foregroundImageState.scale = parseFloat(e.target.value) / 100;
-            fgScaleValue.textContent = e.target.value;
-            redrawCanvas();
+        // Listener do Botão de Busca
+        searchBtn.addEventListener('click', async () => {
+            const query = searchQuery.value;
+            if (!query) { showNotification('Digite um termo para a busca.', true); return; }
+            
+            imageResults.innerHTML = '<div class="col-span-full flex justify-center"><div class="loader"></div></div>';
+            
+            try {
+                let photos;
+                if (activeSearchSource === 'pexels') {
+                    const apiKey = pexelsApiKey.value;
+                    if (!apiKey) { showNotification('Insira sua chave da API do Pexels.', true); return; }
+                    photos = await searchPexels(apiKey, query);
+                } else {
+                    const apiKey = pixabayApiKey.value;
+                    if (!apiKey) { showNotification('Insira sua chave da API do Pixabay.', true); return; }
+                    photos = await searchPixabay(apiKey, query);
+                }
+                displayResults(photos);
+            } catch (error) {
+                showNotification(`Falha na busca: ${error.message}`, true);
+                imageResults.innerHTML = '<p class="text-center text-red-400">A busca falhou.</p>';
+            }
         });
-        fgX.addEventListener('input', (e) => {
-            foregroundImageState.x = parseInt(e.target.value);
-            fgXValue.textContent = e.target.value;
-            redrawCanvas();
-        });
-        fgY.addEventListener('input', (e) => {
-            foregroundImageState.y = parseInt(e.target.value);
-            fgYValue.textContent = e.target.value;
-            redrawCanvas();
-        });
+        searchQuery.addEventListener('keyup', (e) => { if (e.key === 'Enter') searchBtn.click(); });
 
-        // Listeners para os Textos
+        // Demais Listeners
+        brightness.addEventListener('input', (e) => { filterState.brightness = e.target.value; document.getElementById('brightnessValue').textContent = e.target.value; redrawCanvas(); });
+        contrast.addEventListener('input', (e) => { filterState.contrast = e.target.value; document.getElementById('contrastValue').textContent = e.target.value; redrawCanvas(); });
+        saturate.addEventListener('input', (e) => { filterState.saturate = e.target.value; document.getElementById('saturateValue').textContent = e.target.value; redrawCanvas(); });
+        overlayColor.addEventListener('input', (e) => { overlayState.color = e.target.value; redrawCanvas(); });
+        overlayOpacity.addEventListener('input', (e) => { overlayState.opacity = e.target.value; document.getElementById('overlayOpacityValue').textContent = e.target.value; redrawCanvas(); });
+        fgScale.addEventListener('input', (e) => { foregroundImageState.scale = parseFloat(e.target.value) / 100; document.getElementById('fgScaleValue').textContent = e.target.value; redrawCanvas(); });
+        fgX.addEventListener('input', (e) => { foregroundImageState.x = parseInt(e.target.value); document.getElementById('fgXValue').textContent = e.target.value; redrawCanvas(); });
+        fgY.addEventListener('input', (e) => { foregroundImageState.y = parseInt(e.target.value); document.getElementById('fgYValue').textContent = e.target.value; redrawCanvas(); });
+        logoScale.addEventListener('input', (e) => { logoState.scale = parseFloat(e.target.value) / 100; document.getElementById('logoScaleValue').textContent = e.target.value; redrawCanvas(); });
+        logoX.addEventListener('input', (e) => { logoState.x = parseInt(e.target.value); document.getElementById('logoXValue').textContent = e.target.value; redrawCanvas(); });
+        logoY.addEventListener('input', (e) => { logoState.y = parseInt(e.target.value); document.getElementById('logoYValue').textContent = e.target.value; redrawCanvas(); });
+
         function setupTextListeners(type) {
             const textInput = document.getElementById(`${type}Text`);
             const fontInput = document.getElementById(`${type}Font`);
             const colorInput = document.getElementById(`${type}TextColor`);
+            const strokeColorInput = document.getElementById(`${type}StrokeColor`);
+            const strokeWidthInput = document.getElementById(`${type}StrokeWidth`);
             const sizeInput = document.getElementById(`${type}TextSize`);
             const xInput = document.getElementById(`${type}TextX`);
             const yInput = document.getElementById(`${type}TextY`);
-            const sizeValueSpan = document.getElementById(`${type}TextSizeValue`);
-            const xValueSpan = document.getElementById(`${type}TextXValue`);
-            const yValueSpan = document.getElementById(`${type}TextYValue`);
-
+            
             textInput.addEventListener('input', (e) => { textState[type].text = e.target.value.toUpperCase(); redrawCanvas(); });
             fontInput.addEventListener('change', (e) => { textState[type].font = e.target.value; redrawCanvas(); });
             colorInput.addEventListener('input', (e) => { textState[type].color = e.target.value; redrawCanvas(); });
-            sizeInput.addEventListener('input', (e) => { textState[type].size = parseInt(e.target.value); sizeValueSpan.textContent = e.target.value; redrawCanvas(); });
-            xInput.addEventListener('input', (e) => { textState[type].x = parseInt(e.target.value); xValueSpan.textContent = e.target.value; redrawCanvas(); });
-            yInput.addEventListener('input', (e) => { textState[type].y = parseInt(e.target.value); yValueSpan.textContent = e.target.value; redrawCanvas(); });
+            strokeColorInput.addEventListener('input', (e) => { textState[type].strokeColor = e.target.value; redrawCanvas(); });
+            strokeWidthInput.addEventListener('input', (e) => { textState[type].strokeWidth = parseInt(e.target.value); document.getElementById(`${type}StrokeWidthValue`).textContent = e.target.value; redrawCanvas(); });
+            sizeInput.addEventListener('input', (e) => { textState[type].size = parseInt(e.target.value); document.getElementById(`${type}TextSizeValue`).textContent = e.target.value; redrawCanvas(); });
+            xInput.addEventListener('input', (e) => { textState[type].x = parseInt(e.target.value); document.getElementById(`${type}TextXValue`).textContent = e.target.value; redrawCanvas(); });
+            yInput.addEventListener('input', (e) => { textState[type].y = parseInt(e.target.value); document.getElementById(`${type}TextYValue`).textContent = e.target.value; redrawCanvas(); });
         }
         
         setupTextListeners('main');
@@ -420,8 +478,8 @@
         });
 
         // --- INICIALIZAÇÃO ---
-        mainText.value = textState.main.text;
-        subText.value = textState.sub.text;
+        document.getElementById('mainText').value = textState.main.text;
+        document.getElementById('subText').value = textState.sub.text;
         redrawCanvas();
     </script>
 </body>
