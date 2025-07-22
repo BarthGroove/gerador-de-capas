@@ -9,7 +9,7 @@
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Inter:wght@400;700&family=Oswald&family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bangers&family=Inter:wght@400;700&family=Oswald&family=Press+Start+2P&family=Pacifico&family=Lobster&family=Dancing+Script&display=swap" rel="stylesheet">
     <style>
         body { font-family: 'Inter', sans-serif; }
         input[type="range"]::-webkit-slider-thumb {
@@ -75,73 +75,70 @@
                 <button id="tab-pexels" class="tab-btn active flex-1 py-2 rounded-t-lg">Pexels</button>
                 <button id="tab-pixabay" class="tab-btn flex-1 py-2 rounded-t-lg">Pixabay</button>
             </div>
-
-            <!-- Conteúdo da Aba Pexels -->
             <div id="content-pexels" class="tab-content active space-y-4">
-                <input type="password" id="pexelsApiKey" placeholder="Sua Chave da API do Pexels" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                <input type="password" id="pexelsApiKey" placeholder="Sua Chave da API do Pexels" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
             </div>
-
-            <!-- Conteúdo da Aba Pixabay -->
             <div id="content-pixabay" class="tab-content space-y-4">
-                <input type="password" id="pixabayApiKey" placeholder="Sua Chave da API do Pixabay" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                <input type="password" id="pixabayApiKey" placeholder="Sua Chave da API do Pixabay" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
                 <select id="pixabayImageType" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
                     <option value="photo" selected>Fotos</option>
                     <option value="illustration">Ilustrações</option>
                     <option value="vector">Vetores</option>
                 </select>
             </div>
-
             <div class="flex space-x-2 mt-4">
-                <input type="text" id="searchQuery" placeholder="Ex: tecnologia, natureza..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-violet-500">
+                <input type="text" id="searchQuery" placeholder="Ex: tecnologia, natureza..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
                 <button id="searchBtn" class="bg-violet-600 hover:bg-violet-700 text-white font-bold py-2 px-4 rounded-lg">Buscar</button>
             </div>
             <div id="image-results" class="max-h-48 overflow-y-auto rounded-md bg-gray-800 p-2"></div>
         </div>
 
-        <!-- Outros Controles ... -->
+        <!-- Uploads Manuais -->
         <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium mb-2">Ou envie do seu computador:</label>
-                <input type="file" id="imageLoader" accept="image/*" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 cursor-pointer" title="Carregar Imagem de Fundo">
-            </div>
-            <div>
-                <input type="file" id="foregroundImageLoader" accept="image/*" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 cursor-pointer" title="Carregar Imagem Destacada">
-            </div>
-             <div>
-                <input type="file" id="logoLoader" accept="image/*" class="block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 cursor-pointer" title="Carregar sua Logo">
-            </div>
+            <label class="block text-sm font-medium">Ou envie do seu computador:</label>
+            <input type="file" id="imageLoader" accept="image/*" class="input-file" title="Carregar Imagem de Fundo">
+            <input type="file" id="foregroundImageLoader" accept="image/*" class="input-file" title="Carregar Imagem Destacada">
+            <input type="file" id="logoLoader" accept="image/*" class="input-file" title="Carregar sua Logo">
         </div>
+
+        <!-- Filtros e Sobreposição -->
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
             <h2 class="font-bold">Ajustes da Imagem de Fundo</h2>
-            <label for="brightness" class="block text-sm font-medium">Brilho: <span id="brightnessValue">100</span>%</label>
-            <input type="range" id="brightness" min="0" max="200" value="100" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="contrast" class="block text-sm font-medium">Contraste: <span id="contrastValue">100</span>%</label>
-            <input type="range" id="contrast" min="0" max="200" value="100" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="saturate" class="block text-sm font-medium">Saturação: <span id="saturateValue">100</span>%</label>
-            <input type="range" id="saturate" min="0" max="200" value="100" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="overlayColor" class="block text-sm font-medium">Cor de Sobreposição</label>
-            <input type="color" id="overlayColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md cursor-pointer">
-            <label for="overlayOpacity" class="block text-sm font-medium">Opacidade da Sobreposição: <span id="overlayOpacityValue">0</span>%</label>
-            <input type="range" id="overlayOpacity" min="0" max="100" value="0" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <label class="block text-sm font-medium">Brilho: <span id="brightnessValue">100</span>%</label>
+            <input type="range" id="brightness" min="0" max="200" value="100" class="w-full h-2 bg-gray-600 rounded-lg">
+            <label class="block text-sm font-medium">Contraste: <span id="contrastValue">100</span>%</label>
+            <input type="range" id="contrast" min="0" max="200" value="100" class="w-full h-2 bg-gray-600 rounded-lg">
+            <label class="block text-sm font-medium">Saturação: <span id="saturateValue">100</span>%</label>
+            <input type="range" id="saturate" min="0" max="200" value="100" class="w-full h-2 bg-gray-600 rounded-lg">
+            <label class="block text-sm font-medium">Cor de Sobreposição</label>
+            <input type="color" id="overlayColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
+            <label class="block text-sm font-medium">Opacidade: <span id="overlayOpacityValue">0</span>%</label>
+            <input type="range" id="overlayOpacity" min="0" max="100" value="0" class="w-full h-2 bg-gray-600 rounded-lg">
         </div>
+        
+        <!-- Controles da Imagem Destacada -->
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
             <h2 class="font-bold">Controles da Imagem Destacada</h2>
-            <label for="fgScale" class="block text-sm font-medium">Tamanho: <span id="fgScaleValue">100</span>%</label>
-            <input type="range" id="fgScale" min="10" max="300" value="100" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="fgX" class="block text-sm font-medium">Posição Horizontal: <span id="fgXValue">640</span></label>
-            <input type="range" id="fgX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="fgY" class="block text-sm font-medium">Posição Vertical: <span id="fgYValue">360</span></label>
-            <input type="range" id="fgY" min="0" max="720" value="360" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <label class="block text-sm font-medium">Tamanho: <span id="fgScaleValue">100</span>%</label>
+            <input type="range" id="fgScale" min="10" max="300" value="100" class="w-full h-2 bg-gray-600 rounded-lg">
+            <label class="block text-sm font-medium">Posição Horizontal: <span id="fgXValue">640</span></label>
+            <input type="range" id="fgX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg">
+            <label class="block text-sm font-medium">Posição Vertical: <span id="fgYValue">360</span></label>
+            <input type="range" id="fgY" min="0" max="720" value="360" class="w-full h-2 bg-gray-600 rounded-lg">
         </div>
+        
+        <!-- Controles da Logo -->
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
             <h2 class="font-bold">Controles da Logo</h2>
-            <label for="logoScale" class="block text-sm font-medium">Tamanho: <span id="logoScaleValue">20</span>%</label>
-            <input type="range" id="logoScale" min="5" max="100" value="20" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="logoX" class="block text-sm font-medium">Posição Horizontal: <span id="logoXValue">1180</span></label>
-            <input type="range" id="logoX" min="0" max="1280" value="1180" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
-            <label for="logoY" class="block text-sm font-medium">Posição Vertical: <span id="logoYValue">650</span></label>
-            <input type="range" id="logoY" min="0" max="720" value="650" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <label class="block text-sm font-medium">Tamanho: <span id="logoScaleValue">20</span>%</label>
+            <input type="range" id="logoScale" min="5" max="100" value="20" class="w-full h-2 bg-gray-600 rounded-lg">
+            <label class="block text-sm font-medium">Posição Horizontal: <span id="logoXValue">1180</span></label>
+            <input type="range" id="logoX" min="0" max="1280" value="1180" class="w-full h-2 bg-gray-600 rounded-lg">
+            <label class="block text-sm font-medium">Posição Vertical: <span id="logoYValue">650</span></label>
+            <input type="range" id="logoY" min="0" max="720" value="650" class="w-full h-2 bg-gray-600 rounded-lg">
         </div>
+
+        <!-- Controles de Texto Principal -->
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
             <h2 class="font-bold">Texto Principal</h2>
             <input type="text" id="mainText" placeholder="Digite o texto principal..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
@@ -151,20 +148,25 @@
                 <option value="Press Start 2P">Press Start 2P</option>
                 <option value="Oswald">Oswald</option>
                 <option value="Inter">Inter</option>
+                <option value="Pacifico">Pacifico</option>
+                <option value="Lobster">Lobster</option>
+                <option value="Dancing Script">Dancing Script</option>
             </select>
             <label class="block text-sm font-medium">Cor do Texto</label>
-            <input type="color" id="mainTextColor" value="#FFFFFF" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md cursor-pointer">
+            <input type="color" id="mainTextColor" value="#FFFFFF" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
             <label class="block text-sm font-medium">Cor do Contorno</label>
-            <input type="color" id="mainStrokeColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md cursor-pointer">
+            <input type="color" id="mainStrokeColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
             <label class="block text-sm font-medium">Espessura do Contorno: <span id="mainStrokeWidthValue">8</span>px</label>
-            <input type="range" id="mainStrokeWidth" min="0" max="30" value="8" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="mainStrokeWidth" min="0" max="30" value="8" class="w-full h-2 bg-gray-600 rounded-lg">
             <label class="block text-sm font-medium">Tamanho: <span id="mainTextSizeValue">120</span>px</label>
-            <input type="range" id="mainTextSize" min="20" max="300" value="120" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="mainTextSize" min="20" max="300" value="120" class="w-full h-2 bg-gray-600 rounded-lg">
             <label class="block text-sm font-medium">Posição Horizontal: <span id="mainTextXValue">640</span></label>
-            <input type="range" id="mainTextX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="mainTextX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg">
             <label class="block text-sm font-medium">Posição Vertical: <span id="mainTextYValue">150</span></label>
-            <input type="range" id="mainTextY" min="0" max="720" value="150" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="mainTextY" min="0" max="720" value="150" class="w-full h-2 bg-gray-600 rounded-lg">
         </div>
+        
+        <!-- Controles de Texto Secundário -->
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
             <h2 class="font-bold">Texto Secundário</h2>
             <input type="text" id="subText" placeholder="Digite o texto secundário..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
@@ -174,22 +176,41 @@
                 <option value="Press Start 2P">Press Start 2P</option>
                 <option value="Oswald">Oswald</option>
                 <option value="Inter" selected>Inter</option>
+                <option value="Pacifico">Pacifico</option>
+                <option value="Lobster">Lobster</option>
+                <option value="Dancing Script">Dancing Script</option>
             </select>
             <label class="block text-sm font-medium">Cor do Texto</label>
-            <input type="color" id="subTextColor" value="#FFFF00" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md cursor-pointer">
+            <input type="color" id="subTextColor" value="#FFFF00" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
             <label class="block text-sm font-medium">Cor do Contorno</label>
-            <input type="color" id="subStrokeColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md cursor-pointer">
+            <input type="color" id="subStrokeColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
             <label class="block text-sm font-medium">Espessura do Contorno: <span id="subStrokeWidthValue">5</span>px</label>
-            <input type="range" id="subStrokeWidth" min="0" max="30" value="5" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="subStrokeWidth" min="0" max="30" value="5" class="w-full h-2 bg-gray-600 rounded-lg">
             <label class="block text-sm font-medium">Tamanho: <span id="subTextSizeValue">70</span>px</label>
-            <input type="range" id="subTextSize" min="20" max="200" value="70" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="subTextSize" min="20" max="200" value="70" class="w-full h-2 bg-gray-600 rounded-lg">
             <label class="block text-sm font-medium">Posição Horizontal: <span id="subTextXValue">640</span></label>
-            <input type="range" id="subTextX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="subTextX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg">
             <label class="block text-sm font-medium">Posição Vertical: <span id="subTextYValue">600</span></label>
-            <input type="range" id="subTextY" min="0" max="720" value="600" class="w-full h-2 bg-gray-600 rounded-lg appearance-none cursor-pointer">
+            <input type="range" id="subTextY" min="0" max="720" value="600" class="w-full h-2 bg-gray-600 rounded-lg">
         </div>
+
+        <!-- Configurações de Saída -->
+        <div class="space-y-4 rounded-lg bg-gray-700 p-4">
+            <h2 class="font-bold">Configurações de Saída</h2>
+            <label for="outputSize" class="block text-sm font-medium">Dimensões</label>
+            <select id="outputSize" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
+                <option value="1280x720" selected>HD - 1280x720</option>
+                <option value="1920x1080">Full HD - 1920x1080</option>
+            </select>
+            <label for="outputFormat" class="block text-sm font-medium">Formato</label>
+            <select id="outputFormat" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
+                <option value="png" selected>PNG (maior qualidade)</option>
+                <option value="jpeg">JPG (menor tamanho)</option>
+            </select>
+        </div>
+
         <button id="downloadBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-lg">
-            Baixar Capa (PNG)
+            Baixar Capa
         </button>
     </div>
 
@@ -212,8 +233,6 @@
         const logoLoader = document.getElementById('logoLoader');
         const downloadBtn = document.getElementById('downloadBtn');
         const notification = document.getElementById('notification');
-        
-        // Elementos de busca
         const pexelsApiKey = document.getElementById('pexelsApiKey');
         const pixabayApiKey = document.getElementById('pixabayApiKey');
         const searchQuery = document.getElementById('searchQuery');
@@ -224,8 +243,6 @@
         const tabPixabay = document.getElementById('tab-pixabay');
         const contentPexels = document.getElementById('content-pexels');
         const contentPixabay = document.getElementById('content-pixabay');
-        
-        // Demais controles...
         const brightness = document.getElementById('brightness');
         const contrast = document.getElementById('contrast');
         const saturate = document.getElementById('saturate');
@@ -237,12 +254,15 @@
         const logoScale = document.getElementById('logoScale');
         const logoX = document.getElementById('logoX');
         const logoY = document.getElementById('logoY');
+        const outputSize = document.getElementById('outputSize');
+        const outputFormat = document.getElementById('outputFormat');
 
         // --- ESTADO INICIAL ---
         let backgroundImage = null;
         let foregroundImage = null;
         let logoImage = null;
         let activeSearchSource = 'pexels';
+        let currentDimensions = { width: 1280, height: 720 };
 
         const filterState = { brightness: 100, contrast: 100, saturate: 100 };
         const overlayState = { color: '#000000', opacity: 0 };
@@ -274,34 +294,30 @@
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.fillStyle = '#9ca3af';
                 ctx.textAlign = 'center';
-                ctx.font = "40px Inter";
+                ctx.font = `${40 * (currentDimensions.width / 1280)}px Inter`;
                 ctx.fillText('Use a busca ou envie uma imagem', canvas.width / 2, canvas.height / 2);
             } else {
                 ctx.drawImage(backgroundImage, 0, 0, canvas.width, canvas.height);
             }
             ctx.filter = 'none';
-
             if (overlayState.opacity > 0) {
                 ctx.fillStyle = overlayState.color;
                 ctx.globalAlpha = overlayState.opacity / 100;
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.globalAlpha = 1.0;
             }
-
             if (foregroundImage) {
                 const { x, y, scale } = foregroundImageState;
                 const w = foregroundImage.width * scale;
                 const h = foregroundImage.height * scale;
                 ctx.drawImage(foregroundImage, x - w / 2, y - h / 2, w, h);
             }
-
             if (logoImage) {
                 const { x, y, scale } = logoState;
                 const w = logoImage.width * scale;
                 const h = logoImage.height * scale;
                 ctx.drawImage(logoImage, x - w / 2, y - h / 2, w, h);
             }
-
             drawText(textState.main);
             drawText(textState.sub);
         }
@@ -335,17 +351,12 @@
             reader.readAsDataURL(file);
         }
 
-        // --- LÓGICA DE BUSCA DE IMAGENS ---
         async function searchPexels(apiKey, query) {
             const url = `https://api.pexels.com/v1/search?query=${encodeURIComponent(query)}&per_page=15&page=1`;
             const response = await fetch(url, { headers: { 'Authorization': apiKey } });
             if (!response.ok) throw new Error(`Erro Pexels: ${response.statusText}`);
             const data = await response.json();
-            return data.photos.map(photo => ({
-                thumb: photo.src.tiny,
-                full: photo.src.large2x,
-                alt: photo.alt
-            }));
+            return data.photos.map(photo => ({ thumb: photo.src.tiny, full: photo.src.large2x, alt: photo.alt }));
         }
 
         async function searchPixabay(apiKey, query) {
@@ -354,11 +365,7 @@
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Erro Pixabay: ${response.statusText}`);
             const data = await response.json();
-            return data.hits.map(hit => ({
-                thumb: hit.previewURL,
-                full: hit.largeImageURL,
-                alt: hit.tags
-            }));
+            return data.hits.map(hit => ({ thumb: hit.previewURL, full: hit.largeImageURL, alt: hit.tags }));
         }
 
         function displayResults(photos) {
@@ -378,13 +385,59 @@
             showNotification('Carregando imagem...');
             const img = new Image();
             img.crossOrigin = "Anonymous";
-            img.onload = () => {
-                backgroundImage = img;
-                redrawCanvas();
-                showNotification('Imagem de fundo atualizada!', false);
-            };
+            img.onload = () => { backgroundImage = img; redrawCanvas(); showNotification('Imagem de fundo atualizada!', false); };
             img.onerror = () => showNotification('Não foi possível carregar a imagem.', true);
             img.src = imageUrl;
+        }
+
+        function updateCanvasSize(newWidth, newHeight) {
+            const scaleX = newWidth / currentDimensions.width;
+            const scaleY = newHeight / currentDimensions.height;
+
+            // Atualiza estado dos elementos
+            [textState.main, textState.sub].forEach(state => {
+                state.x *= scaleX;
+                state.y *= scaleY;
+                state.size *= Math.min(scaleX, scaleY); // Escala a fonte
+            });
+            foregroundImageState.x *= scaleX;
+            foregroundImageState.y *= scaleY;
+            foregroundImageState.scale *= Math.min(scaleX, scaleY);
+            logoState.x *= scaleX;
+            logoState.y *= scaleY;
+            logoState.scale *= Math.min(scaleX, scaleY);
+
+            // Atualiza canvas
+            canvas.width = newWidth;
+            canvas.height = newHeight;
+            currentDimensions = { width: newWidth, height: newHeight };
+
+            // Atualiza os limites e valores dos sliders
+            const allSliders = document.querySelectorAll('input[type="range"]');
+            allSliders.forEach(slider => {
+                const id = slider.id;
+                if (id.includes('X')) {
+                    slider.max = newWidth;
+                    if (id.includes('main')) slider.value = textState.main.x;
+                    if (id.includes('sub')) slider.value = textState.sub.x;
+                    if (id.includes('fg')) slider.value = foregroundImageState.x;
+                    if (id.includes('logo')) slider.value = logoState.x;
+                } else if (id.includes('Y')) {
+                    slider.max = newHeight;
+                    if (id.includes('main')) slider.value = textState.main.y;
+                    if (id.includes('sub')) slider.value = textState.sub.y;
+                    if (id.includes('fg')) slider.value = foregroundImageState.y;
+                    if (id.includes('logo')) slider.value = logoState.y;
+                } else if (id.includes('Size')) {
+                    if (id.includes('main')) slider.value = textState.main.size;
+                    if (id.includes('sub')) slider.value = textState.sub.size;
+                } else if (id.includes('Scale')) {
+                     if (id.includes('fg')) slider.value = foregroundImageState.scale * 100;
+                     if (id.includes('logo')) slider.value = logoState.scale * 100;
+                }
+            });
+            
+            redrawCanvas();
         }
 
         // --- EVENT LISTENERS ---
@@ -392,29 +445,21 @@
         foregroundImageLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'foreground'));
         logoLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'logo'));
         
-        // Listeners das Abas
         tabPexels.addEventListener('click', () => {
             activeSearchSource = 'pexels';
-            tabPexels.classList.add('active');
-            tabPixabay.classList.remove('active');
-            contentPexels.classList.add('active');
-            contentPixabay.classList.remove('active');
+            tabPexels.classList.add('active'); tabPixabay.classList.remove('active');
+            contentPexels.classList.add('active'); contentPixabay.classList.remove('active');
         });
         tabPixabay.addEventListener('click', () => {
             activeSearchSource = 'pixabay';
-            tabPixabay.classList.add('active');
-            tabPexels.classList.remove('active');
-            contentPixabay.classList.add('active');
-            contentPexels.classList.remove('active');
+            tabPixabay.classList.add('active'); tabPexels.classList.remove('active');
+            contentPixabay.classList.add('active'); contentPexels.classList.remove('active');
         });
 
-        // Listener do Botão de Busca
         searchBtn.addEventListener('click', async () => {
             const query = searchQuery.value;
             if (!query) { showNotification('Digite um termo para a busca.', true); return; }
-            
             imageResults.innerHTML = '<div class="col-span-full flex justify-center"><div class="loader"></div></div>';
-            
             try {
                 let photos;
                 if (activeSearchSource === 'pexels') {
@@ -434,7 +479,6 @@
         });
         searchQuery.addEventListener('keyup', (e) => { if (e.key === 'Enter') searchBtn.click(); });
 
-        // Demais Listeners
         brightness.addEventListener('input', (e) => { filterState.brightness = e.target.value; document.getElementById('brightnessValue').textContent = e.target.value; redrawCanvas(); });
         contrast.addEventListener('input', (e) => { filterState.contrast = e.target.value; document.getElementById('contrastValue').textContent = e.target.value; redrawCanvas(); });
         saturate.addEventListener('input', (e) => { filterState.saturate = e.target.value; document.getElementById('saturateValue').textContent = e.target.value; redrawCanvas(); });
@@ -469,11 +513,22 @@
         
         setupTextListeners('main');
         setupTextListeners('sub');
+        
+        outputSize.addEventListener('change', (e) => {
+            const [newWidth, newHeight] = e.target.value.split('x').map(Number);
+            updateCanvasSize(newWidth, newHeight);
+        });
 
         downloadBtn.addEventListener('click', () => {
+            const format = outputFormat.value;
             const link = document.createElement('a');
-            link.download = 'minha-capa-de-video.png';
-            link.href = canvas.toDataURL('image/png');
+            if (format === 'jpeg') {
+                link.download = 'minha-capa-de-video.jpg';
+                link.href = canvas.toDataURL('image/jpeg', 0.9); // 0.9 = 90% quality
+            } else {
+                link.download = 'minha-capa-de-video.png';
+                link.href = canvas.toDataURL('image/png');
+            }
             link.click();
         });
 
