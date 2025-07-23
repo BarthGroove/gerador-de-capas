@@ -47,7 +47,6 @@
             transform: scale(1.05);
             box-shadow: 0 0 15px rgba(139, 92, 246, 0.7);
         }
-        /* Estilos para as abas de busca */
         .tab-btn {
             transition: background-color 0.2s, color 0.2s;
         }
@@ -60,6 +59,9 @@
         }
         .tab-content.active {
             display: block;
+        }
+        .input-file {
+            @apply block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 cursor-pointer;
         }
     </style>
 </head>
@@ -194,15 +196,53 @@
             <input type="range" id="subTextY" min="0" max="720" value="600" class="w-full h-2 bg-gray-600 rounded-lg">
         </div>
 
+        <!-- NOVO: Controles de Texto Extra -->
+        <div class="space-y-4 rounded-lg bg-gray-700 p-4">
+            <div class="flex items-center justify-between">
+                <h2 class="font-bold">Texto Extra</h2>
+                <label for="enableExtraText" class="flex items-center cursor-pointer">
+                    <span class="mr-3 text-sm">Adicionar</span>
+                    <div class="relative">
+                        <input type="checkbox" id="enableExtraText" class="sr-only">
+                        <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
+                        <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                    </div>
+                </label>
+            </div>
+            <div id="extraTextControls" class="hidden space-y-4 pt-4 border-t border-gray-600">
+                <input type="text" id="extraText" placeholder="Digite o texto extra..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
+                <select id="extraFont" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
+                    <option value="Anton">Anton</option>
+                    <option value="Bangers">Bangers</option>
+                    <option value="Press Start 2P">Press Start 2P</option>
+                    <option value="Oswald">Oswald</option>
+                    <option value="Inter" selected>Inter</option>
+                    <option value="Pacifico">Pacifico</option>
+                    <option value="Lobster">Lobster</option>
+                    <option value="Dancing Script">Dancing Script</option>
+                </select>
+                <label class="block text-sm font-medium">Cor do Texto</label>
+                <input type="color" id="extraTextColor" value="#FF00FF" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
+                <label class="block text-sm font-medium">Cor do Contorno</label>
+                <input type="color" id="extraStrokeColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
+                <label class="block text-sm font-medium">Espessura do Contorno: <span id="extraStrokeWidthValue">4</span>px</label>
+                <input type="range" id="extraStrokeWidth" min="0" max="30" value="4" class="w-full h-2 bg-gray-600 rounded-lg">
+                <label class="block text-sm font-medium">Tamanho: <span id="extraTextSizeValue">60</span>px</label>
+                <input type="range" id="extraTextSize" min="20" max="200" value="60" class="w-full h-2 bg-gray-600 rounded-lg">
+                <label class="block text-sm font-medium">Posição Horizontal: <span id="extraTextXValue">640</span></label>
+                <input type="range" id="extraTextX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg">
+                <label class="block text-sm font-medium">Posição Vertical: <span id="extraTextYValue">400</span></label>
+                <input type="range" id="extraTextY" min="0" max="720" value="400" class="w-full h-2 bg-gray-600 rounded-lg">
+            </div>
+        </div>
+
         <!-- Configurações de Saída -->
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
             <h2 class="font-bold">Configurações de Saída</h2>
-            <label for="outputSize" class="block text-sm font-medium">Dimensões</label>
             <select id="outputSize" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
                 <option value="1280x720" selected>HD - 1280x720</option>
                 <option value="1920x1080">Full HD - 1920x1080</option>
             </select>
-            <label for="outputFormat" class="block text-sm font-medium">Formato</label>
             <select id="outputFormat" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
                 <option value="png" selected>PNG (maior qualidade)</option>
                 <option value="jpeg">JPG (menor tamanho)</option>
@@ -256,6 +296,8 @@
         const logoY = document.getElementById('logoY');
         const outputSize = document.getElementById('outputSize');
         const outputFormat = document.getElementById('outputFormat');
+        const enableExtraText = document.getElementById('enableExtraText');
+        const extraTextControls = document.getElementById('extraTextControls');
 
         // --- ESTADO INICIAL ---
         let backgroundImage = null;
@@ -270,7 +312,8 @@
         const logoState = { x: 1180, y: 650, scale: 0.2 };
         const textState = {
             main: { text: 'TÍTULO INCRÍVEL', color: '#FFFFFF', size: 120, y: 150, x: 640, font: 'Anton', strokeColor: '#000000', strokeWidth: 8 },
-            sub: { text: 'Texto de apoio aqui', color: '#FFFF00', size: 70, y: 600, x: 640, font: 'Inter', strokeColor: '#000000', strokeWidth: 5 }
+            sub: { text: 'Texto de apoio aqui', color: '#FFFF00', size: 70, y: 600, x: 640, font: 'Inter', strokeColor: '#000000', strokeWidth: 5 },
+            extra: { text: '', color: '#FF00FF', size: 60, y: 400, x: 640, font: 'Inter', strokeColor: '#000000', strokeWidth: 4 }
         };
         
         // --- FUNÇÕES DO SISTEMA ---
@@ -320,9 +363,11 @@
             }
             drawText(textState.main);
             drawText(textState.sub);
+            drawText(textState.extra);
         }
         
         function drawText(state) {
+            if (!state || !state.text) return; // Não desenha se o texto estiver vazio
             ctx.font = `bold ${state.size}px "${state.font}"`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
@@ -393,12 +438,10 @@
         function updateCanvasSize(newWidth, newHeight) {
             const scaleX = newWidth / currentDimensions.width;
             const scaleY = newHeight / currentDimensions.height;
-
-            // Atualiza estado dos elementos
-            [textState.main, textState.sub].forEach(state => {
+            [textState.main, textState.sub, textState.extra].forEach(state => {
                 state.x *= scaleX;
                 state.y *= scaleY;
-                state.size *= Math.min(scaleX, scaleY); // Escala a fonte
+                state.size *= Math.min(scaleX, scaleY);
             });
             foregroundImageState.x *= scaleX;
             foregroundImageState.y *= scaleY;
@@ -406,37 +449,14 @@
             logoState.x *= scaleX;
             logoState.y *= scaleY;
             logoState.scale *= Math.min(scaleX, scaleY);
-
-            // Atualiza canvas
             canvas.width = newWidth;
             canvas.height = newHeight;
             currentDimensions = { width: newWidth, height: newHeight };
-
-            // Atualiza os limites e valores dos sliders
-            const allSliders = document.querySelectorAll('input[type="range"]');
-            allSliders.forEach(slider => {
+            document.querySelectorAll('input[type="range"]').forEach(slider => {
                 const id = slider.id;
-                if (id.includes('X')) {
-                    slider.max = newWidth;
-                    if (id.includes('main')) slider.value = textState.main.x;
-                    if (id.includes('sub')) slider.value = textState.sub.x;
-                    if (id.includes('fg')) slider.value = foregroundImageState.x;
-                    if (id.includes('logo')) slider.value = logoState.x;
-                } else if (id.includes('Y')) {
-                    slider.max = newHeight;
-                    if (id.includes('main')) slider.value = textState.main.y;
-                    if (id.includes('sub')) slider.value = textState.sub.y;
-                    if (id.includes('fg')) slider.value = foregroundImageState.y;
-                    if (id.includes('logo')) slider.value = logoState.y;
-                } else if (id.includes('Size')) {
-                    if (id.includes('main')) slider.value = textState.main.size;
-                    if (id.includes('sub')) slider.value = textState.sub.size;
-                } else if (id.includes('Scale')) {
-                     if (id.includes('fg')) slider.value = foregroundImageState.scale * 100;
-                     if (id.includes('logo')) slider.value = logoState.scale * 100;
-                }
+                if (id.includes('X')) slider.max = newWidth;
+                if (id.includes('Y')) slider.max = newHeight;
             });
-            
             redrawCanvas();
         }
 
@@ -513,6 +533,18 @@
         
         setupTextListeners('main');
         setupTextListeners('sub');
+        setupTextListeners('extra');
+
+        enableExtraText.addEventListener('change', (e) => {
+            if (e.target.checked) {
+                extraTextControls.classList.remove('hidden');
+                textState.extra.text = 'TEXTO EXTRA';
+            } else {
+                extraTextControls.classList.add('hidden');
+                textState.extra.text = '';
+            }
+            redrawCanvas();
+        });
         
         outputSize.addEventListener('change', (e) => {
             const [newWidth, newHeight] = e.target.value.split('x').map(Number);
@@ -524,7 +556,7 @@
             const link = document.createElement('a');
             if (format === 'jpeg') {
                 link.download = 'minha-capa-de-video.jpg';
-                link.href = canvas.toDataURL('image/jpeg', 0.9); // 0.9 = 90% quality
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
             } else {
                 link.download = 'minha-capa-de-video.png';
                 link.href = canvas.toDataURL('image/png');
