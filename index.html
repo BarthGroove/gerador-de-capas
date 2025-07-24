@@ -63,6 +63,10 @@
         .input-file {
             @apply block w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-violet-50 file:text-violet-700 hover:file:bg-violet-100 cursor-pointer;
         }
+        /* Esconde/mostra os controles de cor */
+        .color-controls.hidden {
+            display: none;
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white flex flex-col md:flex-row h-screen overflow-hidden">
@@ -140,100 +144,71 @@
             <input type="range" id="logoY" min="0" max="720" value="650" class="w-full h-2 bg-gray-600 rounded-lg">
         </div>
 
-        <!-- Controles de Texto Principal -->
-        <div class="space-y-4 rounded-lg bg-gray-700 p-4">
-            <h2 class="font-bold">Texto Principal</h2>
-            <input type="text" id="mainText" placeholder="Digite o texto principal..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
-            <select id="mainFont" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
-                <option value="Anton" selected>Anton</option>
-                <option value="Bangers">Bangers</option>
-                <option value="Press Start 2P">Press Start 2P</option>
-                <option value="Oswald">Oswald</option>
-                <option value="Inter">Inter</option>
-                <option value="Pacifico">Pacifico</option>
-                <option value="Lobster">Lobster</option>
-                <option value="Dancing Script">Dancing Script</option>
-            </select>
-            <label class="block text-sm font-medium">Cor do Texto</label>
-            <input type="color" id="mainTextColor" value="#FFFFFF" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
-            <label class="block text-sm font-medium">Cor do Contorno</label>
-            <input type="color" id="mainStrokeColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
-            <label class="block text-sm font-medium">Espessura do Contorno: <span id="mainStrokeWidthValue">8</span>px</label>
-            <input type="range" id="mainStrokeWidth" min="0" max="30" value="8" class="w-full h-2 bg-gray-600 rounded-lg">
-            <label class="block text-sm font-medium">Tamanho: <span id="mainTextSizeValue">120</span>px</label>
-            <input type="range" id="mainTextSize" min="20" max="300" value="120" class="w-full h-2 bg-gray-600 rounded-lg">
-            <label class="block text-sm font-medium">Posição Horizontal: <span id="mainTextXValue">640</span></label>
-            <input type="range" id="mainTextX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg">
-            <label class="block text-sm font-medium">Posição Vertical: <span id="mainTextYValue">150</span></label>
-            <input type="range" id="mainTextY" min="0" max="720" value="150" class="w-full h-2 bg-gray-600 rounded-lg">
-        </div>
-        
-        <!-- Controles de Texto Secundário -->
-        <div class="space-y-4 rounded-lg bg-gray-700 p-4">
-            <h2 class="font-bold">Texto Secundário</h2>
-            <input type="text" id="subText" placeholder="Digite o texto secundário..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
-            <select id="subFont" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
-                <option value="Anton">Anton</option>
-                <option value="Bangers">Bangers</option>
-                <option value="Press Start 2P">Press Start 2P</option>
-                <option value="Oswald">Oswald</option>
-                <option value="Inter" selected>Inter</option>
-                <option value="Pacifico">Pacifico</option>
-                <option value="Lobster">Lobster</option>
-                <option value="Dancing Script">Dancing Script</option>
-            </select>
-            <label class="block text-sm font-medium">Cor do Texto</label>
-            <input type="color" id="subTextColor" value="#FFFF00" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
-            <label class="block text-sm font-medium">Cor do Contorno</label>
-            <input type="color" id="subStrokeColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
-            <label class="block text-sm font-medium">Espessura do Contorno: <span id="subStrokeWidthValue">5</span>px</label>
-            <input type="range" id="subStrokeWidth" min="0" max="30" value="5" class="w-full h-2 bg-gray-600 rounded-lg">
-            <label class="block text-sm font-medium">Tamanho: <span id="subTextSizeValue">70</span>px</label>
-            <input type="range" id="subTextSize" min="20" max="200" value="70" class="w-full h-2 bg-gray-600 rounded-lg">
-            <label class="block text-sm font-medium">Posição Horizontal: <span id="subTextXValue">640</span></label>
-            <input type="range" id="subTextX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg">
-            <label class="block text-sm font-medium">Posição Vertical: <span id="subTextYValue">600</span></label>
-            <input type="range" id="subTextY" min="0" max="720" value="600" class="w-full h-2 bg-gray-600 rounded-lg">
-        </div>
+        <!-- Controles de Texto (template para ser reutilizado) -->
+        <template id="text-controls-template">
+            <div class="space-y-4">
+                <input type="text" class="text-input w-full bg-gray-800 border border-gray-600 rounded-md p-2">
+                <select class="font-select w-full bg-gray-800 border border-gray-600 rounded-md p-2">
+                    <option value="Anton">Anton</option>
+                    <option value="Bangers">Bangers</option>
+                    <option value="Press Start 2P">Press Start 2P</option>
+                    <option value="Oswald">Oswald</option>
+                    <option value="Inter">Inter</option>
+                    <option value="Pacifico">Pacifico</option>
+                    <option value="Lobster">Lobster</option>
+                    <option value="Dancing Script">Dancing Script</option>
+                </select>
+                
+                <label class="block text-sm font-medium">Tipo de Preenchimento</label>
+                <select class="fill-type-select w-full bg-gray-800 border border-gray-600 rounded-md p-2">
+                    <option value="solid">Cor Sólida</option>
+                    <option value="gradient">Degradê</option>
+                </select>
 
-        <!-- NOVO: Controles de Texto Extra -->
+                <div class="solid-color-controls color-controls">
+                    <label class="block text-sm font-medium">Cor do Texto</label>
+                    <input type="color" class="text-color w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
+                </div>
+
+                <div class="gradient-color-controls color-controls hidden">
+                    <label class="block text-sm font-medium">Cor de Cima</label>
+                    <input type="color" class="gradient-color1 w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
+                    <label class="block text-sm font-medium mt-2">Cor de Baixo</label>
+                    <input type="color" class="gradient-color2 w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
+                </div>
+
+                <label class="block text-sm font-medium">Cor do Contorno</label>
+                <input type="color" class="stroke-color w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
+                <label class="block text-sm font-medium">Espessura do Contorno: <span class="stroke-width-value"></span>px</label>
+                <input type="range" class="stroke-width w-full h-2 bg-gray-600 rounded-lg">
+                <label class="block text-sm font-medium">Tamanho: <span class="text-size-value"></span>px</label>
+                <input type="range" class="text-size w-full h-2 bg-gray-600 rounded-lg">
+                <label class="block text-sm font-medium">Posição Horizontal: <span class="text-x-value"></span></label>
+                <input type="range" class="text-x w-full h-2 bg-gray-600 rounded-lg">
+                <label class="block text-sm font-medium">Posição Vertical: <span class="text-y-value"></span></label>
+                <input type="range" class="text-y w-full h-2 bg-gray-600 rounded-lg">
+            </div>
+        </template>
+        
+        <div id="main-text-container" class="space-y-4 rounded-lg bg-gray-700 p-4">
+            <h2 class="font-bold">Texto Principal</h2>
+        </div>
+        <div id="sub-text-container" class="space-y-4 rounded-lg bg-gray-700 p-4">
+            <h2 class="font-bold">Texto Secundário</h2>
+        </div>
         <div class="space-y-4 rounded-lg bg-gray-700 p-4">
             <div class="flex items-center justify-between">
                 <h2 class="font-bold">Texto Extra</h2>
                 <label for="enableExtraText" class="flex items-center cursor-pointer">
                     <span class="mr-3 text-sm">Adicionar</span>
                     <div class="relative">
-                        <input type="checkbox" id="enableExtraText" class="sr-only">
+                        <input type="checkbox" id="enableExtraText" class="sr-only peer">
                         <div class="block bg-gray-600 w-14 h-8 rounded-full"></div>
-                        <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition"></div>
+                        <div class="dot absolute left-1 top-1 bg-white w-6 h-6 rounded-full transition peer-checked:translate-x-full peer-checked:bg-violet-400"></div>
                     </div>
                 </label>
             </div>
-            <div id="extraTextControls" class="hidden space-y-4 pt-4 border-t border-gray-600">
-                <input type="text" id="extraText" placeholder="Digite o texto extra..." class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
-                <select id="extraFont" class="w-full bg-gray-800 border border-gray-600 rounded-md p-2">
-                    <option value="Anton">Anton</option>
-                    <option value="Bangers">Bangers</option>
-                    <option value="Press Start 2P">Press Start 2P</option>
-                    <option value="Oswald">Oswald</option>
-                    <option value="Inter" selected>Inter</option>
-                    <option value="Pacifico">Pacifico</option>
-                    <option value="Lobster">Lobster</option>
-                    <option value="Dancing Script">Dancing Script</option>
-                </select>
-                <label class="block text-sm font-medium">Cor do Texto</label>
-                <input type="color" id="extraTextColor" value="#FF00FF" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
-                <label class="block text-sm font-medium">Cor do Contorno</label>
-                <input type="color" id="extraStrokeColor" value="#000000" class="w-full h-10 p-1 bg-gray-800 border border-gray-600 rounded-md">
-                <label class="block text-sm font-medium">Espessura do Contorno: <span id="extraStrokeWidthValue">4</span>px</label>
-                <input type="range" id="extraStrokeWidth" min="0" max="30" value="4" class="w-full h-2 bg-gray-600 rounded-lg">
-                <label class="block text-sm font-medium">Tamanho: <span id="extraTextSizeValue">60</span>px</label>
-                <input type="range" id="extraTextSize" min="20" max="200" value="60" class="w-full h-2 bg-gray-600 rounded-lg">
-                <label class="block text-sm font-medium">Posição Horizontal: <span id="extraTextXValue">640</span></label>
-                <input type="range" id="extraTextX" min="0" max="1280" value="640" class="w-full h-2 bg-gray-600 rounded-lg">
-                <label class="block text-sm font-medium">Posição Vertical: <span id="extraTextYValue">400</span></label>
-                <input type="range" id="extraTextY" min="0" max="720" value="400" class="w-full h-2 bg-gray-600 rounded-lg">
-            </div>
+            <div id="extra-text-container" class="hidden pt-4 border-t border-gray-600"></div>
         </div>
 
         <!-- Configurações de Saída -->
@@ -265,40 +240,6 @@
     </div>
 
     <script>
-        // --- SELEÇÃO DOS ELEMENTOS DO DOM ---
-        const canvas = document.getElementById('thumbnailCanvas');
-        const ctx = canvas.getContext('2d');
-        const imageLoader = document.getElementById('imageLoader');
-        const foregroundImageLoader = document.getElementById('foregroundImageLoader');
-        const logoLoader = document.getElementById('logoLoader');
-        const downloadBtn = document.getElementById('downloadBtn');
-        const notification = document.getElementById('notification');
-        const pexelsApiKey = document.getElementById('pexelsApiKey');
-        const pixabayApiKey = document.getElementById('pixabayApiKey');
-        const searchQuery = document.getElementById('searchQuery');
-        const searchBtn = document.getElementById('searchBtn');
-        const imageResults = document.getElementById('image-results');
-        const pixabayImageType = document.getElementById('pixabayImageType');
-        const tabPexels = document.getElementById('tab-pexels');
-        const tabPixabay = document.getElementById('tab-pixabay');
-        const contentPexels = document.getElementById('content-pexels');
-        const contentPixabay = document.getElementById('content-pixabay');
-        const brightness = document.getElementById('brightness');
-        const contrast = document.getElementById('contrast');
-        const saturate = document.getElementById('saturate');
-        const overlayColor = document.getElementById('overlayColor');
-        const overlayOpacity = document.getElementById('overlayOpacity');
-        const fgScale = document.getElementById('fgScale');
-        const fgX = document.getElementById('fgX');
-        const fgY = document.getElementById('fgY');
-        const logoScale = document.getElementById('logoScale');
-        const logoX = document.getElementById('logoX');
-        const logoY = document.getElementById('logoY');
-        const outputSize = document.getElementById('outputSize');
-        const outputFormat = document.getElementById('outputFormat');
-        const enableExtraText = document.getElementById('enableExtraText');
-        const extraTextControls = document.getElementById('extraTextControls');
-
         // --- ESTADO INICIAL ---
         let backgroundImage = null;
         let foregroundImage = null;
@@ -311,15 +252,19 @@
         const foregroundImageState = { x: 640, y: 360, scale: 1.0 };
         const logoState = { x: 1180, y: 650, scale: 0.2 };
         const textState = {
-            main: { text: 'TÍTULO INCRÍVEL', color: '#FFFFFF', size: 120, y: 150, x: 640, font: 'Anton', strokeColor: '#000000', strokeWidth: 8 },
-            sub: { text: 'Texto de apoio aqui', color: '#FFFF00', size: 70, y: 600, x: 640, font: 'Inter', strokeColor: '#000000', strokeWidth: 5 },
-            extra: { text: '', color: '#FF00FF', size: 60, y: 400, x: 640, font: 'Inter', strokeColor: '#000000', strokeWidth: 4 }
+            main: { text: 'TÍTULO INCRÍVEL', color: '#FFFFFF', size: 120, y: 150, x: 640, font: 'Anton', strokeColor: '#000000', strokeWidth: 8, fillType: 'solid', gradientColor1: '#FFFFFF', gradientColor2: '#AAAAAA' },
+            sub: { text: 'Texto de apoio aqui', color: '#FFFF00', size: 70, y: 600, x: 640, font: 'Inter', strokeColor: '#000000', strokeWidth: 5, fillType: 'solid', gradientColor1: '#FFFF00', gradientColor2: '#AAAA00' },
+            extra: { text: '', color: '#FF00FF', size: 60, y: 400, x: 640, font: 'Inter', strokeColor: '#000000', strokeWidth: 4, fillType: 'solid', gradientColor1: '#FF00FF', gradientColor2: '#AA00AA' }
         };
         
         // --- FUNÇÕES DO SISTEMA ---
+        const canvas = document.getElementById('thumbnailCanvas');
+        const ctx = canvas.getContext('2d');
+
         function showNotification(message, isError = false) {
-            const p = notification.querySelector('p');
+            const p = document.querySelector('#notification p');
             p.textContent = message;
+            const notification = document.getElementById('notification');
             notification.classList.remove('bg-green-500', 'bg-red-500', 'hidden', '-bottom-20');
             notification.classList.add(isError ? 'bg-red-500' : 'bg-green-500');
             setTimeout(() => { notification.classList.add('bottom-5'); }, 10);
@@ -367,16 +312,25 @@
         }
         
         function drawText(state) {
-            if (!state || !state.text) return; // Não desenha se o texto estiver vazio
+            if (!state || !state.text) return;
             ctx.font = `bold ${state.size}px "${state.font}"`;
             ctx.textAlign = 'center';
             ctx.textBaseline = 'middle';
+            
+            if (state.fillType === 'gradient') {
+                const gradient = ctx.createLinearGradient(state.x, state.y - state.size / 2, state.x, state.y + state.size / 2);
+                gradient.addColorStop(0, state.gradientColor1);
+                gradient.addColorStop(1, state.gradientColor2);
+                ctx.fillStyle = gradient;
+            } else {
+                ctx.fillStyle = state.color;
+            }
+
             ctx.strokeStyle = state.strokeColor;
             ctx.lineWidth = state.strokeWidth;
             if (state.strokeWidth > 0) {
                 ctx.strokeText(state.text, state.x, state.y);
             }
-            ctx.fillStyle = state.color;
             ctx.fillText(state.text, state.x, state.y);
         }
         
@@ -405,7 +359,7 @@
         }
 
         async function searchPixabay(apiKey, query) {
-            const imageType = pixabayImageType.value;
+            const imageType = document.getElementById('pixabayImageType').value;
             const url = `https://pixabay.com/api/?key=${apiKey}&q=${encodeURIComponent(query)}&image_type=${imageType}&per_page=15`;
             const response = await fetch(url);
             if (!response.ok) throw new Error(`Erro Pixabay: ${response.statusText}`);
@@ -414,6 +368,7 @@
         }
 
         function displayResults(photos) {
+            const imageResults = document.getElementById('image-results');
             imageResults.innerHTML = '';
             if (photos.length === 0) { imageResults.innerHTML = '<p>Nenhum resultado.</p>'; return; }
             photos.forEach(photo => {
@@ -460,114 +415,198 @@
             redrawCanvas();
         }
 
-        // --- EVENT LISTENERS ---
-        imageLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'background'));
-        foregroundImageLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'foreground'));
-        logoLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'logo'));
-        
-        tabPexels.addEventListener('click', () => {
-            activeSearchSource = 'pexels';
-            tabPexels.classList.add('active'); tabPixabay.classList.remove('active');
-            contentPexels.classList.add('active'); contentPixabay.classList.remove('active');
-        });
-        tabPixabay.addEventListener('click', () => {
-            activeSearchSource = 'pixabay';
-            tabPixabay.classList.add('active'); tabPexels.classList.remove('active');
-            contentPixabay.classList.add('active'); contentPexels.classList.remove('active');
-        });
-
-        searchBtn.addEventListener('click', async () => {
-            const query = searchQuery.value;
-            if (!query) { showNotification('Digite um termo para a busca.', true); return; }
-            imageResults.innerHTML = '<div class="col-span-full flex justify-center"><div class="loader"></div></div>';
-            try {
-                let photos;
-                if (activeSearchSource === 'pexels') {
-                    const apiKey = pexelsApiKey.value;
-                    if (!apiKey) { showNotification('Insira sua chave da API do Pexels.', true); return; }
-                    photos = await searchPexels(apiKey, query);
-                } else {
-                    const apiKey = pixabayApiKey.value;
-                    if (!apiKey) { showNotification('Insira sua chave da API do Pixabay.', true); return; }
-                    photos = await searchPixabay(apiKey, query);
-                }
-                displayResults(photos);
-            } catch (error) {
-                showNotification(`Falha na busca: ${error.message}`, true);
-                imageResults.innerHTML = '<p class="text-center text-red-400">A busca falhou.</p>';
-            }
-        });
-        searchQuery.addEventListener('keyup', (e) => { if (e.key === 'Enter') searchBtn.click(); });
-
-        brightness.addEventListener('input', (e) => { filterState.brightness = e.target.value; document.getElementById('brightnessValue').textContent = e.target.value; redrawCanvas(); });
-        contrast.addEventListener('input', (e) => { filterState.contrast = e.target.value; document.getElementById('contrastValue').textContent = e.target.value; redrawCanvas(); });
-        saturate.addEventListener('input', (e) => { filterState.saturate = e.target.value; document.getElementById('saturateValue').textContent = e.target.value; redrawCanvas(); });
-        overlayColor.addEventListener('input', (e) => { overlayState.color = e.target.value; redrawCanvas(); });
-        overlayOpacity.addEventListener('input', (e) => { overlayState.opacity = e.target.value; document.getElementById('overlayOpacityValue').textContent = e.target.value; redrawCanvas(); });
-        fgScale.addEventListener('input', (e) => { foregroundImageState.scale = parseFloat(e.target.value) / 100; document.getElementById('fgScaleValue').textContent = e.target.value; redrawCanvas(); });
-        fgX.addEventListener('input', (e) => { foregroundImageState.x = parseInt(e.target.value); document.getElementById('fgXValue').textContent = e.target.value; redrawCanvas(); });
-        fgY.addEventListener('input', (e) => { foregroundImageState.y = parseInt(e.target.value); document.getElementById('fgYValue').textContent = e.target.value; redrawCanvas(); });
-        logoScale.addEventListener('input', (e) => { logoState.scale = parseFloat(e.target.value) / 100; document.getElementById('logoScaleValue').textContent = e.target.value; redrawCanvas(); });
-        logoX.addEventListener('input', (e) => { logoState.x = parseInt(e.target.value); document.getElementById('logoXValue').textContent = e.target.value; redrawCanvas(); });
-        logoY.addEventListener('input', (e) => { logoState.y = parseInt(e.target.value); document.getElementById('logoYValue').textContent = e.target.value; redrawCanvas(); });
-
-        function setupTextListeners(type) {
-            const textInput = document.getElementById(`${type}Text`);
-            const fontInput = document.getElementById(`${type}Font`);
-            const colorInput = document.getElementById(`${type}TextColor`);
-            const strokeColorInput = document.getElementById(`${type}StrokeColor`);
-            const strokeWidthInput = document.getElementById(`${type}StrokeWidth`);
-            const sizeInput = document.getElementById(`${type}TextSize`);
-            const xInput = document.getElementById(`${type}TextX`);
-            const yInput = document.getElementById(`${type}TextY`);
+        // --- INICIALIZAÇÃO E EVENT LISTENERS ---
+        document.addEventListener('DOMContentLoaded', () => {
+            // Clonar e popular os painéis de texto
+            const template = document.getElementById('text-controls-template');
             
-            textInput.addEventListener('input', (e) => { textState[type].text = e.target.value.toUpperCase(); redrawCanvas(); });
-            fontInput.addEventListener('change', (e) => { textState[type].font = e.target.value; redrawCanvas(); });
-            colorInput.addEventListener('input', (e) => { textState[type].color = e.target.value; redrawCanvas(); });
-            strokeColorInput.addEventListener('input', (e) => { textState[type].strokeColor = e.target.value; redrawCanvas(); });
-            strokeWidthInput.addEventListener('input', (e) => { textState[type].strokeWidth = parseInt(e.target.value); document.getElementById(`${type}StrokeWidthValue`).textContent = e.target.value; redrawCanvas(); });
-            sizeInput.addEventListener('input', (e) => { textState[type].size = parseInt(e.target.value); document.getElementById(`${type}TextSizeValue`).textContent = e.target.value; redrawCanvas(); });
-            xInput.addEventListener('input', (e) => { textState[type].x = parseInt(e.target.value); document.getElementById(`${type}TextXValue`).textContent = e.target.value; redrawCanvas(); });
-            yInput.addEventListener('input', (e) => { textState[type].y = parseInt(e.target.value); document.getElementById(`${type}TextYValue`).textContent = e.target.value; redrawCanvas(); });
-        }
-        
-        setupTextListeners('main');
-        setupTextListeners('sub');
-        setupTextListeners('extra');
+            function populateTextControls(type, containerId) {
+                const clone = template.content.cloneNode(true);
+                const container = document.getElementById(containerId);
+                container.appendChild(clone);
+                
+                // Configurar IDs e valores iniciais
+                const state = textState[type];
+                container.querySelector('.text-input').id = `${type}Text`;
+                container.querySelector('.text-input').value = state.text;
+                container.querySelector('.font-select').id = `${type}Font`;
+                container.querySelector('.font-select').value = state.font;
+                container.querySelector('.fill-type-select').id = `${type}FillType`;
+                container.querySelector('.text-color').id = `${type}TextColor`;
+                container.querySelector('.text-color').value = state.color;
+                container.querySelector('.gradient-color1').id = `${type}GradientColor1`;
+                container.querySelector('.gradient-color1').value = state.gradientColor1;
+                container.querySelector('.gradient-color2').id = `${type}GradientColor2`;
+                container.querySelector('.gradient-color2').value = state.gradientColor2;
+                container.querySelector('.stroke-color').id = `${type}StrokeColor`;
+                container.querySelector('.stroke-color').value = state.strokeColor;
+                container.querySelector('.stroke-width').id = `${type}StrokeWidth`;
+                container.querySelector('.stroke-width').value = state.strokeWidth;
+                container.querySelector('.stroke-width-value').id = `${type}StrokeWidthValue`;
+                container.querySelector('.stroke-width-value').textContent = state.strokeWidth;
+                container.querySelector('.text-size').id = `${type}TextSize`;
+                container.querySelector('.text-size').value = state.size;
+                container.querySelector('.text-size-value').id = `${type}TextSizeValue`;
+                container.querySelector('.text-size-value').textContent = state.size;
+                container.querySelector('.text-x').id = `${type}TextX`;
+                container.querySelector('.text-x').value = state.x;
+                container.querySelector('.text-x-value').id = `${type}TextXValue`;
+                container.querySelector('.text-x-value').textContent = state.x;
+                container.querySelector('.text-y').id = `${type}TextY`;
+                container.querySelector('.text-y').value = state.y;
+                container.querySelector('.text-y-value').id = `${type}TextYValue`;
+                container.querySelector('.text-y-value').textContent = state.y;
 
-        enableExtraText.addEventListener('change', (e) => {
-            if (e.target.checked) {
-                extraTextControls.classList.remove('hidden');
-                textState.extra.text = 'TEXTO EXTRA';
-            } else {
-                extraTextControls.classList.add('hidden');
-                textState.extra.text = '';
+                setupTextListeners(type, container);
             }
+
+            populateTextControls('main', 'main-text-container');
+            populateTextControls('sub', 'sub-text-container');
+            populateTextControls('extra', 'extra-text-container');
+
+            // Listeners Gerais
+            const imageLoader = document.getElementById('imageLoader');
+            const foregroundImageLoader = document.getElementById('foregroundImageLoader');
+            const logoLoader = document.getElementById('logoLoader');
+            const tabPexels = document.getElementById('tab-pexels');
+            const tabPixabay = document.getElementById('tab-pixabay');
+            const searchBtn = document.getElementById('searchBtn');
+            const searchQuery = document.getElementById('searchQuery');
+            const brightness = document.getElementById('brightness');
+            const contrast = document.getElementById('contrast');
+            const saturate = document.getElementById('saturate');
+            const overlayColor = document.getElementById('overlayColor');
+            const overlayOpacity = document.getElementById('overlayOpacity');
+            const fgScale = document.getElementById('fgScale');
+            const fgX = document.getElementById('fgX');
+            const fgY = document.getElementById('fgY');
+            const logoScale = document.getElementById('logoScale');
+            const logoX = document.getElementById('logoX');
+            const logoY = document.getElementById('logoY');
+            const outputSize = document.getElementById('outputSize');
+            const downloadBtn = document.getElementById('downloadBtn');
+            const enableExtraText = document.getElementById('enableExtraText');
+            const extraTextContainer = document.getElementById('extra-text-container');
+
+            imageLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'background'));
+            foregroundImageLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'foreground'));
+            logoLoader.addEventListener('change', (e) => handleImageLoad(e.target.files[0], 'logo'));
+            
+            tabPexels.addEventListener('click', () => {
+                activeSearchSource = 'pexels';
+                tabPexels.classList.add('active'); tabPixabay.classList.remove('active');
+                document.getElementById('content-pexels').classList.add('active'); document.getElementById('content-pixabay').classList.remove('active');
+            });
+            tabPixabay.addEventListener('click', () => {
+                activeSearchSource = 'pixabay';
+                tabPixabay.classList.add('active'); tabPexels.classList.remove('active');
+                document.getElementById('content-pixabay').classList.add('active'); document.getElementById('content-pexels').classList.remove('active');
+            });
+
+            searchBtn.addEventListener('click', async () => {
+                const query = searchQuery.value;
+                if (!query) { showNotification('Digite um termo para a busca.', true); return; }
+                document.getElementById('image-results').innerHTML = '<div class="col-span-full flex justify-center"><div class="loader"></div></div>';
+                try {
+                    let photos;
+                    if (activeSearchSource === 'pexels') {
+                        const apiKey = document.getElementById('pexelsApiKey').value;
+                        if (!apiKey) { showNotification('Insira sua chave da API do Pexels.', true); return; }
+                        photos = await searchPexels(apiKey, query);
+                    } else {
+                        const apiKey = document.getElementById('pixabayApiKey').value;
+                        if (!apiKey) { showNotification('Insira sua chave da API do Pixabay.', true); return; }
+                        photos = await searchPixabay(apiKey, query);
+                    }
+                    displayResults(photos);
+                } catch (error) {
+                    showNotification(`Falha na busca: ${error.message}`, true);
+                    document.getElementById('image-results').innerHTML = '<p class="text-center text-red-400">A busca falhou.</p>';
+                }
+            });
+            searchQuery.addEventListener('keyup', (e) => { if (e.key === 'Enter') searchBtn.click(); });
+
+            brightness.addEventListener('input', (e) => { filterState.brightness = e.target.value; document.getElementById('brightnessValue').textContent = e.target.value; redrawCanvas(); });
+            contrast.addEventListener('input', (e) => { filterState.contrast = e.target.value; document.getElementById('contrastValue').textContent = e.target.value; redrawCanvas(); });
+            saturate.addEventListener('input', (e) => { filterState.saturate = e.target.value; document.getElementById('saturateValue').textContent = e.target.value; redrawCanvas(); });
+            overlayColor.addEventListener('input', (e) => { overlayState.color = e.target.value; redrawCanvas(); });
+            overlayOpacity.addEventListener('input', (e) => { overlayState.opacity = e.target.value; document.getElementById('overlayOpacityValue').textContent = e.target.value; redrawCanvas(); });
+            fgScale.addEventListener('input', (e) => { foregroundImageState.scale = parseFloat(e.target.value) / 100; document.getElementById('fgScaleValue').textContent = e.target.value; redrawCanvas(); });
+            fgX.addEventListener('input', (e) => { foregroundImageState.x = parseInt(e.target.value); document.getElementById('fgXValue').textContent = e.target.value; redrawCanvas(); });
+            fgY.addEventListener('input', (e) => { foregroundImageState.y = parseInt(e.target.value); document.getElementById('fgYValue').textContent = e.target.value; redrawCanvas(); });
+            logoScale.addEventListener('input', (e) => { logoState.scale = parseFloat(e.target.value) / 100; document.getElementById('logoScaleValue').textContent = e.target.value; redrawCanvas(); });
+            logoX.addEventListener('input', (e) => { logoState.x = parseInt(e.target.value); document.getElementById('logoXValue').textContent = e.target.value; redrawCanvas(); });
+            logoY.addEventListener('input', (e) => { logoState.y = parseInt(e.target.value); document.getElementById('logoYValue').textContent = e.target.value; redrawCanvas(); });
+
+            function setupTextListeners(type, container) {
+                const textInput = container.querySelector('.text-input');
+                const fontInput = container.querySelector('.font-select');
+                const fillTypeInput = container.querySelector('.fill-type-select');
+                const colorInput = container.querySelector('.text-color');
+                const gradientColor1Input = container.querySelector('.gradient-color1');
+                const gradientColor2Input = container.querySelector('.gradient-color2');
+                const strokeColorInput = container.querySelector('.stroke-color');
+                const strokeWidthInput = container.querySelector('.stroke-width');
+                const sizeInput = container.querySelector('.text-size');
+                const xInput = container.querySelector('.text-x');
+                const yInput = container.querySelector('.text-y');
+                
+                textInput.addEventListener('input', (e) => { textState[type].text = e.target.value.toUpperCase(); redrawCanvas(); });
+                fontInput.addEventListener('change', (e) => { textState[type].font = e.target.value; redrawCanvas(); });
+                fillTypeInput.addEventListener('change', (e) => {
+                    textState[type].fillType = e.target.value;
+                    const solidControls = container.querySelector('.solid-color-controls');
+                    const gradientControls = container.querySelector('.gradient-color-controls');
+                    if (e.target.value === 'solid') {
+                        solidControls.classList.remove('hidden');
+                        gradientControls.classList.add('hidden');
+                    } else {
+                        solidControls.classList.add('hidden');
+                        gradientControls.classList.remove('hidden');
+                    }
+                    redrawCanvas();
+                });
+                colorInput.addEventListener('input', (e) => { textState[type].color = e.target.value; redrawCanvas(); });
+                gradientColor1Input.addEventListener('input', (e) => { textState[type].gradientColor1 = e.target.value; redrawCanvas(); });
+                gradientColor2Input.addEventListener('input', (e) => { textState[type].gradientColor2 = e.target.value; redrawCanvas(); });
+                strokeColorInput.addEventListener('input', (e) => { textState[type].strokeColor = e.target.value; redrawCanvas(); });
+                strokeWidthInput.addEventListener('input', (e) => { textState[type].strokeWidth = parseInt(e.target.value); container.querySelector('.stroke-width-value').textContent = e.target.value; redrawCanvas(); });
+                sizeInput.addEventListener('input', (e) => { textState[type].size = parseInt(e.target.value); container.querySelector('.text-size-value').textContent = e.target.value; redrawCanvas(); });
+                xInput.addEventListener('input', (e) => { textState[type].x = parseInt(e.target.value); container.querySelector('.text-x-value').textContent = e.target.value; redrawCanvas(); });
+                yInput.addEventListener('input', (e) => { textState[type].y = parseInt(e.target.value); container.querySelector('.text-y-value').textContent = e.target.value; redrawCanvas(); });
+            }
+            
+            enableExtraText.addEventListener('change', (e) => {
+                if (e.target.checked) {
+                    extraTextContainer.classList.remove('hidden');
+                    textState.extra.text = 'TEXTO EXTRA';
+                } else {
+                    extraTextContainer.classList.add('hidden');
+                    textState.extra.text = '';
+                }
+                redrawCanvas();
+            });
+            
+            outputSize.addEventListener('change', (e) => {
+                const [newWidth, newHeight] = e.target.value.split('x').map(Number);
+                updateCanvasSize(newWidth, newHeight);
+            });
+
+            downloadBtn.addEventListener('click', () => {
+                const format = document.getElementById('outputFormat').value;
+                const link = document.createElement('a');
+                if (format === 'jpeg') {
+                    link.download = 'minha-capa-de-video.jpg';
+                    link.href = canvas.toDataURL('image/jpeg', 0.9);
+                } else {
+                    link.download = 'minha-capa-de-video.png';
+                    link.href = canvas.toDataURL('image/png');
+                }
+                link.click();
+            });
+
             redrawCanvas();
         });
-        
-        outputSize.addEventListener('change', (e) => {
-            const [newWidth, newHeight] = e.target.value.split('x').map(Number);
-            updateCanvasSize(newWidth, newHeight);
-        });
-
-        downloadBtn.addEventListener('click', () => {
-            const format = outputFormat.value;
-            const link = document.createElement('a');
-            if (format === 'jpeg') {
-                link.download = 'minha-capa-de-video.jpg';
-                link.href = canvas.toDataURL('image/jpeg', 0.9);
-            } else {
-                link.download = 'minha-capa-de-video.png';
-                link.href = canvas.toDataURL('image/png');
-            }
-            link.click();
-        });
-
-        // --- INICIALIZAÇÃO ---
-        document.getElementById('mainText').value = textState.main.text;
-        document.getElementById('subText').value = textState.sub.text;
-        redrawCanvas();
     </script>
 </body>
 </html>
